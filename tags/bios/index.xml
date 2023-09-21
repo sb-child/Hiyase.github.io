@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BIOS on 冷曦的喵喵小屋</title><link>https://hiyase.github.io/tags/bios/</link><description>Recent content in BIOS on 冷曦的喵喵小屋</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 21 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://hiyase.github.io/tags/bios/index.xml" rel="self" type="application/rss+xml"/><item><title>计算机启动过程</title><link>https://hiyase.github.io/p/computer-startup-process/</link><pubDate>Thu, 21 Sep 2023 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/computer-startup-process/</guid><description>&lt;h2 id="硬件">硬件&lt;/h2>
+&lt;p>对于&lt;strong>通常PC&lt;/strong>来讲，当你第一次开机时(相对于固件程序)，硬件会完成一遍通体自检&lt;br>
+检查CPU，内存，硬盘，显卡(有顺序，但不知道)等硬件&lt;br>
+等待自检完成后进行下一步启动&lt;/p>
+&lt;p>一个基础知识：无论是UEFI，还是BIOS，都是一种固件程序&lt;br>
+单UEFI的实现甚至可以没有BIOS控制&lt;/p>
+&lt;h3 id="bios">BIOS&lt;/h3>
+&lt;p>当BIOS启动时，BIOS首先会检查一遍(或三遍)硬件(主板本身，CPU，内存，显卡)，然后初始化硬件信息和各类设备(存储，其他外设等)&lt;br>
+然后寻找各个储存设备的MBR(主引导记录)部分，然后启动(后面更多算软件了，懒得讲)&lt;/p>
+&lt;h3 id="uefi">UEFI&lt;/h3>
+&lt;p>在大多数UEFI固件启动过程中，并不会做过多的硬件检测，而是给系统进行检测，并且有一套相对统一的接口&lt;/p>
+&lt;h4 id="fast-boot快速启动">Fast Boot（快速启动）&lt;/h4>
+&lt;p>UEFI的快速启动功能，一般不会在第一次启动时出现&lt;br>
+硬件部分的快速启动一般是指，只初始化部分硬件，例如，只初始化你上次启动的硬盘，和上次有通讯的鼠标，键盘等接口，直接不初始化PS/2等接口&lt;br>
+这里我印象里更多是延迟初始化硬件，它可以进入系统后，或者过程中初始化信息，这些我并不确定&lt;/p>
+&lt;h4 id="nvram">NVRAM&lt;/h4>
+&lt;p>NVRAM是指UEFI固件启动顺序的存储区(可能包括存储设置信息)，这里存储的信息有：启动顺序，启动项名称，启动项指向的硬盘及启动的EFI文件&lt;br>
+当系统安装进硬盘的最后时刻，一般会添加NVRAM信息，Linux系统使用&lt;code>efibootmgr&lt;/code>进行管理，Windows使用&lt;code>bcdedit&lt;/code>进行管理&lt;br>
+当然，也可能包含其他我并不知道的信息，但主要信息就是这些&lt;/p>
+&lt;h4 id="boot-启动">Boot （启动）&lt;/h4>
+&lt;p>UEFI的启动，照常理来说，会优先检索NVRAM进行启动，如果NVRAM没有&lt;br>
+则会检测所有存储设备的GPT分区格式，寻找EFI分区&lt;br>
+默认启动里面的/EFI/Boot/bootx64.efi 如果没有该文件，应该默认找该目录的bootia32.efi&lt;br>
+无论是bootx64还是bootia32，都只应该是一个指路牌&lt;br>
+部分固件程序会设计不寻找bootia32，也有部分会直接检索EFI/目录下的所有efi文件进行NVRAM的添加，但这应该并不是标准操作&lt;/p>
+&lt;h4 id="secure-boot安全启动">Secure Boot（安全启动）&lt;/h4>
+&lt;p>在安全启动启用的情况，启动EFI的过程中，会校验EFI存在的签名信息，它是否已经内置在了固件中，如没有内置，就直接禁止启动&lt;br>
+在大多数Android设备上，Bootloader锁，就是一种安全启动的行为，但是里面只包含了设备制造商的签名信息&lt;br>
+另外，签名信息是可以自签名并且导入进固件中的。&lt;br>
+当然，这种情况也适用于Android，但是方法可能不一样，但理论是相同的&lt;/p></description></item></channel></rss>

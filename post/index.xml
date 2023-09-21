@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 冷曦的喵喵小屋</title><link>https://hiyase.github.io/post/</link><description>Recent content in Posts on 冷曦的喵喵小屋</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 21 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://hiyase.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>计算机启动过程</title><link>https://hiyase.github.io/p/computer-startup-process/</link><pubDate>Thu, 21 Sep 2023 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/computer-startup-process/</guid><description>&lt;h2 id="硬件">硬件&lt;/h2>
+&lt;p>对于&lt;strong>通常PC&lt;/strong>来讲，当你第一次开机时(相对于固件程序)，硬件会完成一遍通体自检&lt;br>
+检查CPU，内存，硬盘，显卡(有顺序，但不知道)等硬件&lt;br>
+等待自检完成后进行下一步启动&lt;/p>
+&lt;p>一个基础知识：无论是UEFI，还是BIOS，都是一种固件程序&lt;br>
+单UEFI的实现甚至可以没有BIOS控制&lt;/p>
+&lt;h3 id="bios">BIOS&lt;/h3>
+&lt;p>当BIOS启动时，BIOS首先会检查一遍(或三遍)硬件(主板本身，CPU，内存，显卡)，然后初始化硬件信息和各类设备(存储，其他外设等)&lt;br>
+然后寻找各个储存设备的MBR(主引导记录)部分，然后启动(后面更多算软件了，懒得讲)&lt;/p>
+&lt;h3 id="uefi">UEFI&lt;/h3>
+&lt;p>在大多数UEFI固件启动过程中，并不会做过多的硬件检测，而是给系统进行检测，并且有一套相对统一的接口&lt;/p>
+&lt;h4 id="fast-boot快速启动">Fast Boot（快速启动）&lt;/h4>
+&lt;p>UEFI的快速启动功能，一般不会在第一次启动时出现&lt;br>
+硬件部分的快速启动一般是指，只初始化部分硬件，例如，只初始化你上次启动的硬盘，和上次有通讯的鼠标，键盘等接口，直接不初始化PS/2等接口&lt;br>
+这里我印象里更多是延迟初始化硬件，它可以进入系统后，或者过程中初始化信息，这些我并不确定&lt;/p>
+&lt;h4 id="nvram">NVRAM&lt;/h4>
+&lt;p>NVRAM是指UEFI固件启动顺序的存储区(可能包括存储设置信息)，这里存储的信息有：启动顺序，启动项名称，启动项指向的硬盘及启动的EFI文件&lt;br>
+当系统安装进硬盘的最后时刻，一般会添加NVRAM信息，Linux系统使用&lt;code>efibootmgr&lt;/code>进行管理，Windows使用&lt;code>bcdedit&lt;/code>进行管理&lt;br>
+当然，也可能包含其他我并不知道的信息，但主要信息就是这些&lt;/p>
+&lt;h4 id="boot-启动">Boot （启动）&lt;/h4>
+&lt;p>UEFI的启动，照常理来说，会优先检索NVRAM进行启动，如果NVRAM没有&lt;br>
+则会检测所有存储设备的GPT分区格式，寻找EFI分区&lt;br>
+默认启动里面的/EFI/Boot/bootx64.efi 如果没有该文件，应该默认找该目录的bootia32.efi&lt;br>
+无论是bootx64还是bootia32，都只应该是一个指路牌&lt;br>
+部分固件程序会设计不寻找bootia32，也有部分会直接检索EFI/目录下的所有efi文件进行NVRAM的添加，但这应该并不是标准操作&lt;/p>
+&lt;h4 id="secure-boot安全启动">Secure Boot（安全启动）&lt;/h4>
+&lt;p>在安全启动启用的情况，启动EFI的过程中，会校验EFI存在的签名信息，它是否已经内置在了固件中，如没有内置，就直接禁止启动&lt;br>
+在大多数Android设备上，Bootloader锁，就是一种安全启动的行为，但是里面只包含了设备制造商的签名信息&lt;br>
+另外，签名信息是可以自签名并且导入进固件中的。&lt;br>
+当然，这种情况也适用于Android，但是方法可能不一样，但理论是相同的&lt;/p></description></item><item><title>使用ADB获取各类信息</title><link>https://hiyase.github.io/p/use-adb-get-info/</link><pubDate>Sat, 19 Aug 2023 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/use-adb-get-info/</guid><description>&lt;p>以下信息获取方法都是在设备 &lt;a class="link" href="https://www.mi.com/redmik30pro/specs" target="_blank" rel="noopener"
+>Redmi K30 Pro&lt;/a> 以及 &lt;a class="link" href="https://crdroid.net/lmi/9" target="_blank" rel="noopener"
+>Crdroid Rom&lt;/a> 上进行&lt;br>
+如在联发科，华为设备上，可能部分命令无法使用。且不保证所有命令都可以使用&lt;/p>
+&lt;h2 id="adb-base-command">ADB Base command&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb -s &lt;span class="o">[&lt;/span>serial/IP:Port&lt;span class="o">]&lt;/span> &lt;span class="c1">#使用指定的序列号/地址进行连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb devices -l &lt;span class="c1">#获取已连接的设备， -l 有更细节的参数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb connect &lt;span class="c1">#ip:port 通过无线网络连接&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>state: authorizing (等待授权) ，device(已连接) no device(无设备) ，offline(未连接/无响应)&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">usb&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#有此参数表示该设备通过USB连接&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">product&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">lineage_lmi &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#设备的产品名称是lineage_lmi，它似乎运行的是LineageOS自定义ROM。&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">model&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Redmi_K30_Pro &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#设备的模型名称是Redmi K30 Pro。&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">device&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">lmi &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#设备的代号&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">transport_id&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">11&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#传输ID为11&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c">#由以下三个属性组成：ro.product.name ro.product.model ro.product.device&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;a class="link" href="https://www.cnblogs.com/1996swg/p/9810424.html" target="_blank" rel="noopener"
+>https://www.cnblogs.com/1996swg/p/9810424.html&lt;/a> &lt;em>&lt;strong>要看一下&lt;/strong>&lt;/em>&lt;/p>
+&lt;h2 id="get-hardware-info">Get Hardware info&lt;/h2>
+&lt;hr>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell getprop ro.product.manufacturer &lt;span class="c1">#获取设备制造商&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.product.model &lt;span class="c1">#获取设备型号 &lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.product.name &lt;span class="c1">#获取设备产品名称&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.product.device &lt;span class="c1">#获取设备代号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.product.board &lt;span class="c1">#获取主板型号&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="cpu-info">CPU info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell getprop ro.soc.manufacturer &lt;span class="c1">#获取soc制造商&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.soc.model &lt;span class="c1">#获取soc名称&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /sys/devices/soc0/vendor &lt;span class="c1">#获取soc0的制造商信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /sys/devices/soc0/family &lt;span class="c1">#获取soc0的家族系列&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /sys/devices/soc0/chip_name &lt;span class="c1">#获取soc0的芯片名称&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /sys/devices/system/cpu/possible &lt;span class="c1">#获取 cpu 核心数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /proc/stat &lt;span class="c1">#获取 cpu 运行状态&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cat /proc/cpuinfo
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell su -c cat &lt;span class="s1">&amp;#39;/dev/block/bootdevice/by-name/logfs | grep &amp;#34;Chip&amp;#34;&amp;#39;&lt;/span> &lt;span class="c1">#芯片，版本，序列号（疑似联发科不可用）&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>processor: 0/1 表示第几个核。
+BogoMIPS：伪MIPS，用于测量CPU速度
+Features：表示当前CPU所支持的特性
+CPU architecture：7表示arm-v7，8表示arm-v8&lt;/p>
+&lt;h4 id="more-cpu-info">More CPU info&lt;/h4>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell cat /sys/devices/system/cpu/cpufreq/policy&lt;span class="o">[&lt;/span>id&lt;span class="o">]&lt;/span>/
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>affected_cpus&lt;/code> — 这一组policy可调度哪个核心&lt;/li>
+&lt;li>&lt;code>cpuinfo_min_freq&lt;/code> — CPU 最小可用频率&lt;/li>
+&lt;li>&lt;code>cpuinfo_max_freq&lt;/code> — CPU 最大可用频率&lt;/li>
+&lt;li>&lt;code>scaling_driver&lt;/code> — CPUfreq 的驱动程序&lt;/li>
+&lt;li>&lt;code>scaling_available_governors&lt;/code> — 列出CPU可用的调度器&lt;/li>
+&lt;li>&lt;code>scaling_available_frequencies&lt;/code> — 列出CPU的可用频率&lt;/li>
+&lt;li>&lt;code>scaling_governor&lt;/code> — 正在使用的CPUfreq调度器 (可更改)&lt;/li>
+&lt;li>&lt;code>cpuinfo_cur_freq&lt;/code> — 显示 CPU 当前的处理频率&lt;/li>
+&lt;li>&lt;code>scaling_min_freq&lt;/code> — 当前最小频率 (可更改)&lt;/li>
+&lt;li>&lt;code>scaling_max_freq&lt;/code> — 当前最大频率 (可更改)&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>使用 &lt;code>echo [调度器] &amp;gt; /sys/devices/system/cpu/cpufreq/policy[id]/scaling_governor&lt;/code> (root)可以更改调度器&lt;/strong>
+&lt;strong>频率同理，但无论更改哪个，必须是可用的&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell &lt;span class="s1">&amp;#39;su -c &amp;#34;echo xxx &amp;gt; file&amp;#34;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>possible 可能的CPU核心数
+present 展示的CPU核心数
+modalias ：CPU 类型和 feature
+uevent :展示(?)信息 (需要Root) 作用不详
+ofline online 下线/上线的CPU&lt;/p>
+&lt;h3 id="get-gpu-info">Get GPU info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys gfxinfo &lt;span class="c1">#信息过多需要精简(无用信息)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys graphicsstats &lt;span class="c1">#应用显卡占用历史信息(无用信息)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys SurfaceFlinger &lt;span class="p">|&lt;/span>grep GLES &lt;span class="c1">#显卡型号及OpenGL版本&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell cmd gpu vkjson &lt;span class="c1"># vulkan 信息(部分)(未来可能弃用)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在 &lt;code>/sys/kernel/gpu&lt;/code> 目录下，可以修改调度器及频率信息(更改和读取均需要Root) &lt;em>华为设备可能不在此目录&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>gpu_available_governor&lt;/code> — 可用的调度器列表&lt;/li>
+&lt;li>&lt;code>gpu_governor&lt;/code> — 当前使用的调度器 (可更改)&lt;/li>
+&lt;li>&lt;code>gpu_freq_table&lt;/code> — 支持频率列表&lt;/li>
+&lt;li>&lt;code>gpu_min_clock&lt;/code> — 当前最小频率 (可更改)&lt;/li>
+&lt;li>&lt;code>gpu_max_clock&lt;/code> — 当前最大频率 (可更改)&lt;/li>
+&lt;li>&lt;code>gpu_busy&lt;/code> — 当前占用率&lt;/li>
+&lt;li>&lt;code>gpu_clock&lt;/code> — 当前处理频率，单位&lt;code>Mhz&lt;/code>&lt;/li>
+&lt;li>&lt;code>gpu_tmu&lt;/code> — &lt;strong>不知道&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>上述目录是软链接，真实目录为：
+&lt;code>/sys/devices/platform/soc/3d00000.qcom,kgsl-3d0/devfreq/3d00000.qcom,kgsl-3d0&lt;/code>
+但使用真实目录可能会造成不兼容&lt;/p>
+&lt;h4 id="opengl和vulkan的更多信息只能通过代码实现">OpenGL和Vulkan的更多信息只能通过代码实现&lt;/h4>
+&lt;p>&lt;strong>from Google:&lt;/strong>
+如果设备包含 Vulkan 驱动程序，则该设备需要声明 &lt;code>FEATURE_VULKAN_HARDWARE_LEVEL&lt;/code> 和 &lt;code>FEATURE_VULKAN_HARDWARE_VERSION&lt;/code> 系统功能&lt;/p>
+&lt;h3 id="get-memory-info">Get Memory info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell cat /proc/meminfo &lt;span class="c1">#参数太多，等待理解&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys procstats &lt;span class="c1">#内存占用情况，等待检查更多参数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys meminfo -h &lt;span class="c1">#等待检查更多参数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell su -c cat &lt;span class="s1">&amp;#39;/dev/block/bootdevice/by-name/logfs | grep &amp;#34;DDR Frequency&amp;#34;&amp;#39;&lt;/span> &lt;span class="c1">#疑似获取内存频率 (疑似联发科不可用)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-disk-info">Get Disk info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys diskstats &lt;span class="c1">#磁盘状态&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell df &lt;span class="c1">#目前信息还少，需要其他方案&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dd &lt;span class="s2">&amp;#34;if=/dev/block/bootdevice/by-name/recovery of=/sdcard/recovery.img&amp;#34;&lt;/span> &lt;span class="c1">#备份recovery 到 /sdcard&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-screen-info">Get Screen info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys display &lt;span class="c1">#大量显示相关信息 (需筛选)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys SurfaceFlinger &lt;span class="c1">#图形合成器信息（包含屏幕信息，等筛选&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.sf.lcd_density &lt;span class="c1">#疑似获取默认屏幕密度&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="wm-command">wm Command&lt;/h4>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell wm size &lt;span class="c1">#显示或更改尺寸&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell wm size reset &lt;span class="c1">#重置屏幕尺寸&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell wm density &lt;span class="c1">#显示或更改密度&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell wm density reset &lt;span class="c1">#重置屏幕密度&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-battery-info">Get Battery info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys battery -h &lt;span class="c1">#等待检查更多参数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys batterystats -h &lt;span class="c1">#等待检查更多参数&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="l">From adb shell dumpsys battery&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">AC powered&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#表示交流电充电 true为正在充电,false为未在充电&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">USB powered&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#表示USB充电，规则同上，省略&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">Wireless powered&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#表示无线充电&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">Max charging current&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">1742674&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#当前充电电流， 这里为 1742674 µA 微安培 换算为 1742.674 mA&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">Max charging voltage&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">4289539&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#当前充电电压， 这里为 4289539 nV 纳伏特 换算为 4.289539 mV&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">Charge counter&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">2015801&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#疑似单位为 µAh 微安时 换算为 2015.801mAh 充满电时为 3622.000mAh 可能是损耗&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">status: 2 #电池状态 1: 未知 2: 正在充电 3: 正在放电 4&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">(已连接)但未充电 5:已充满 &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">health: 2 #电池健康 1: 未知 2: 良好 3: 过热 4: 已损坏 5: 电压过高。6: 未知故障。7&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">温度过低&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">present&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#true表示已安装电池&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">level&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">56&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">##当前电池电量&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">scale&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">100&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">##最大电池电量&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">voltage&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">4289&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#电池电压&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">temperature&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">307&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#温度，这里是30.7°C&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">technology&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Li-poly &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c">#电池技术，这里是锂电池&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="设计电池电量需要实用代码实现充电信息可能只能使用root获取">设计电池电量需要实用代码实现，充电信息可能只能使用Root获取&lt;/h4>
+&lt;h4 id="use-root-get-battery-info">Use root Get Battery info&lt;/h4>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell su -c cat /sys/class/power_supply/bms/uevent
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell su -c cat /sys/class/power_supply/battery/uevent
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell su -c cat /sys/class/power_supply/usb/uevent
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-camera-info">Get Camera info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys media.camera &lt;span class="c1">#等待信息筛选&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>更多信息需要代码实现&lt;/p>
+&lt;h3 id="get-network-info">Get Network info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell ifconfig &lt;span class="c1">#可以使用&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys wifi &lt;span class="c1">#大量无用信息，懒得筛选&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys telecom &lt;span class="c1">#可能有相关信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys telephony.registry &lt;span class="c1">#可能有相关信息&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="目前无进度使用代码实现使用root可以使用iw命令">目前无进度，使用代码实现，使用root可以使用&lt;code>iw&lt;/code>命令()&lt;/h4>
+&lt;h3 id="get-bluetooth-info">Get Bluetooth info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys bluetooth_manager &lt;span class="c1">#一条命令基本足以&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-audio-info">Get Audio info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys media.audio_policy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-otherdevice-info">Get OtherDevice info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys input &lt;span class="c1">#输入设备&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys sensorservice &lt;span class="c1">#传感器&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="get-system-info">Get System info&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell pm list features &lt;span class="c1">#系统所支持的特性&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-build-info">Get Build info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.version.release &lt;span class="c1"># Android 版本号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.version.sdk &lt;span class="c1"># API 版本&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.version.security_patch &lt;span class="c1"># 安全更新的日期&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.id &lt;span class="c1"># 构建的版本号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.display.id &lt;span class="c1"># 显示的构建版本号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.fingerprint &lt;span class="c1"># 构建的指纹&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.date &lt;span class="c1"># 构建时间&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.date.utc &lt;span class="c1"># 以unix时间戳显示的构建时间&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop ro.build.tags &lt;span class="c1"># 构建的标签&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop gsm.version.baseband &lt;span class="c1"># 获取基带信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell uname -a &lt;span class="c1"># 获取内核版本&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-permission-info">Get permission info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell pm list permission-groups &lt;span class="c1">#列出所有权限组&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm list permissions &lt;span class="c1">#列出所有权限&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-users-info">Get Users info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell pm list users &lt;span class="c1">#列出所有用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm create-user &lt;span class="c1">#创建用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm remove-user &lt;span class="c1">#删除用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm get-max-users &lt;span class="c1">#获取最大用户数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell setprop fw.max_users &lt;span class="m">10&lt;/span> &lt;span class="c1">#设置最大用户数为10 (需要root)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm set-user-restriction &lt;span class="c1">#设置用户限制&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell pm get-max-running-users &lt;span class="c1">#获取系统可以运行的最大用户数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys activity users &lt;span class="c1">#活动中的用户信息&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="get-other-info">Get Other info&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell dumpsys media.player &lt;span class="c1"># 编解码器信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys media.extractor &lt;span class="c1"># 编解码器信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys account &lt;span class="c1"># 获取用户下已登陆账户信息 &lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell dumpsys webviewupdate &lt;span class="c1">#WebView信息&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="settings">Settings&lt;/h3>
+&lt;p>当命令是setings &lt;code>get&lt;/code> 为获取 &lt;code>put&lt;/code> 为修改
+使用 &lt;code>setprop&lt;/code> 可以更改prop内容&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell getprop persist.sys.locale &lt;span class="c1"># 设置的语言&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell getprop persist.sys.timezone &lt;span class="c1"># 设置的时区&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get secure system_locales &lt;span class="c1"># 系统的语言地区信息(?)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global device_name &lt;span class="c1"># 用户定义的设备名称&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global zram_enabled &lt;span class="c1"># 是否启用zram&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="captive-protal">Captive Protal&lt;/h4>
+&lt;p>网络验证功能 修改后需要重启网络&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell settings get global captive_portal_detection_enabled &lt;span class="c1"># 1为启用 0为禁用&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global captive_portal_use_https &lt;span class="c1"># 是否启用https&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global captive_portal_server &lt;span class="c1"># 验证服务地址&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global captive_portal_http_url
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb shell settings get global captive_portal_https_url
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>我真的懂程序吗</title><link>https://hiyase.github.io/p/my-programs-question/</link><pubDate>Mon, 07 Aug 2023 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/my-programs-question/</guid><description>&lt;h2 id="扪心自问我真的懂程序吗">扪心自问，我真的懂程序吗…&lt;/h2>
+&lt;p>从21年，甚至更早，想着自己写一个项目，但到目前为止，内心的项目到现在仍未实现，本来想着第一篇博客是一个技术向博客，但是还是在这里碎碎念吧…&lt;/p>
+&lt;p>在VSCode面前，放在键盘上，试想着如何写出，试想着搜索什么，左右拼凑成一个我自己写出来的项目程序，可是没学过任何程序的我…不会写&lt;em>&lt;strong>甚至于…内心充满了悲伤，我很痛苦&lt;/strong>&lt;/em>，很想写出来做一个优秀漂亮的好程序，大项目，可是连开头我都做不出来，甚至想用ChatGPT帮我写，有着思路，有着头绪的输入，但是总好像不完美，我不够满意……我……好像不懂程序，但我总是试着理解程序…例如一次点击事件，一次鼠标的拖动事件(其XY坐标的变化…)。&lt;/p>
+&lt;p>让程序只是能跑起来？…嗯…我不满意…是这样，我不想妥协…想让程序更高效，更优质，而不只是，it work。&lt;/p>
+&lt;h2 id="androidmanager程序规划">AndroidManager程序规划&lt;/h2>
+&lt;p>都写到这里了，讲一讲心里那个程序规划吧，有人要是愿意抄出来呢，也好，但是请写思路来源这里，接下来讲大致的程序设计吧&lt;/p>
+&lt;p>一个基于ADB(Android Debug Bridge)的 &lt;strong>桌面端的&lt;/strong> &lt;strong>Android管理器&lt;/strong> 可能也会用到Fastboot之类的Android-Platform-Tools，我想做的功能有很多，也想开源。说实话，我觉得它更像一个手机助手 但我希望它是一个&lt;strong>跨平台的&lt;/strong>，支持多设备的，支持各类语言的&lt;em>&lt;strong>Android管理器&lt;/strong>&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>设备信息获取(主页面)：
+&lt;ul>
+&lt;li>ADB的权限很高，可以拿到很多设备信息，让人知道自己的硬件状况，拿不到的就用Root做&lt;/li>
+&lt;li>获取处理器，内存，硬盘，屏幕，电池，摄像头，甚至是指纹和扬声器的信息，用户有权知道硬件是谁制造的，有着什么参数&lt;/li>
+&lt;li>然后就是获取系统信息，是否Root，SELinux状态，甚至是SafeNet，虽然没什么用，不放会觉得缺点什么(也不着重写)&lt;/li>
+&lt;li>主页面套个 &lt;a class="link" href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener"
+>scrcpy&lt;/a>作为屏幕显示和控制（也作为一个主功能）&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>应用管理器(模块)：
+&lt;ul>
+&lt;li>&lt;strong>可以进行多用户管理的应用管理器,可以进行多用户管理的应用管理器,可以进行多用户管理的应用管理器(对多用户功能的执念)&lt;/strong>&lt;/li>
+&lt;li>嗯&amp;hellip;对应用的安装，卸载，备份，显示应用的各类信息，对活动，服务，权限(AppOps)的管理&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>文件管理器(模块)：
+&lt;ul>
+&lt;li>走MTP服务的文件管理器效率好像很慢，所以基于ADB的来一份效率会不会提高(所以只是普通的文件管理器)&lt;/li>
+&lt;li>如果adb效率不高的话，就在设备上开文件相关的网络服务(如FTP/SMB)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>任务管理器(模块)：
+&lt;ul>
+&lt;li>以Android应用管理视角和Linux进程管理视角做主选项，显示CPU，内存，硬盘读写占用情况，显示哪个用户使用&lt;/li>
+&lt;li>按CPU、内存、硬盘、占用情况及用户排序，显示其应用下的服务/进程，或是进程下的进程，并且给折叠起来&lt;/li>
+&lt;li>CPU(多线程)、内存(硬件保留，系统占用，应用占用，已缓存)、硬盘独立的占用视图及相关详细数据&lt;/li>
+&lt;li>以及进程状态，甚至是给设置状态（如ACTIVE,RARE等（好像应该放在应用管理器）&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>磁盘管理器(模块)：
+&lt;ul>
+&lt;li>对Android所有分区进行备份，还原，格式化，擦除，对分区进行调整(危险性功能警告)&lt;/li>
+&lt;li>挂载内存盘&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>杂项功能(模块)：
+&lt;ul>
+&lt;li>大概就是一些改一些设置页面不存在的隐藏设置，例如改一改网络检测服务器，改一改时间更新服务器&lt;/li>
+&lt;li>还有就是围绕着ADB的各类东西，黑域激活，冰箱激活那种吧&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="既然要画饼那就画大饼哪怕吃不下">既然要画饼，那就画大饼，哪怕吃不下&lt;/h3>
+&lt;p>后续随时可能修改文章，把饼画的更大&lt;/p>
+&lt;p>scrcpy题外话：在&lt;a class="link" href="https://blog.rom1v.com/2018/03/introducing-scrcpy/" target="_blank" rel="noopener"
+>scrpy开发者的博客&lt;/a>里,有把dex文件push进系统里的方法，一些功能无法实现的话，也可以试试&lt;/p></description></item><item><title>Hello World</title><link>https://hiyase.github.io/p/hello-world/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/hello-world/</guid><description>&lt;img src="https://hiyase.github.io/p/hello-world/cover.jpg" alt="Featured image of post Hello World" />&lt;p>Welcome to Hugo theme Stack. This is your first post. Edit or delete it, then start writing!&lt;/p>
+&lt;p>For more information about this theme, check the documentation: &lt;a class="link" href="https://docs.stack.jimmycai.com/" target="_blank" rel="noopener"
+>https://docs.stack.jimmycai.com/&lt;/a>&lt;/p>
+&lt;p>Want a site like this? Check out &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack-starter" target="_blank" rel="noopener"
+>hugo-theme-stack-stater&lt;/a>&lt;/p>
+&lt;blockquote>
+&lt;p>Photo by &lt;a class="link" href="https://unsplash.com/@pawel_czerwinski" target="_blank" rel="noopener"
+>Pawel Czerwinski&lt;/a> on &lt;a class="link" href="https://unsplash.com/" target="_blank" rel="noopener"
+>Unsplash&lt;/a>&lt;/p>
+&lt;/blockquote></description></item></channel></rss>

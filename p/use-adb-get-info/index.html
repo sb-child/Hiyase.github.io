@@ -1,0 +1,238 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="以下信息获取方法都是在设备 Redmi K30 Pro 以及 Crdroid Rom 上进行 如在联发科，华为设备上，可能部分命令无法使用。且不保证所有命令都可以使用 ADB Base command 1 2 3 adb -s [serial/IP:Port] #使"><title>使用ADB获取各类信息</title><link rel=canonical href=https://hiyase.github.io/p/use-adb-get-info/><link rel=stylesheet href=/scss/style.min.2d1ca842b7bcc3186b59110e106c4903d44b66ff9f1ba4796a77a66d2ed5fb47.css><meta property="og:title" content="使用ADB获取各类信息"><meta property="og:description" content="以下信息获取方法都是在设备 Redmi K30 Pro 以及 Crdroid Rom 上进行 如在联发科，华为设备上，可能部分命令无法使用。且不保证所有命令都可以使用 ADB Base command 1 2 3 adb -s [serial/IP:Port] #使"><meta property="og:url" content="https://hiyase.github.io/p/use-adb-get-info/"><meta property="og:site_name" content="冷曦的喵喵小屋"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta property="article:tag" content="Android"><meta property="article:published_time" content="2023-08-19T00:00:00+00:00"><meta property="article:modified_time" content="2023-08-19T00:00:00+00:00"><meta property="og:image" content="https://hiyase.github.io/img/avatar.jpeg"><meta name=twitter:site content="@Hiyase_Nya"><meta name=twitter:creator content="@Hiyase_Nya"><meta name=twitter:title content="使用ADB获取各类信息"><meta name=twitter:description content="以下信息获取方法都是在设备 Redmi K30 Pro 以及 Crdroid Rom 上进行 如在联发科，华为设备上，可能部分命令无法使用。且不保证所有命令都可以使用 ADB Base command 1 2 3 adb -s [serial/IP:Port] #使"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://hiyase.github.io/img/avatar.jpeg"><link rel="shortcut icon" href=/avatar.jpeg><meta name=og:locale content="ZH_CN"><meta name=baidu-site-verification content="codeva-15Z3yBzunS"><meta name=google-site-verification content="ADpGBjGL6lfKY_SYQp3V5z2nr5WR8tlXNFVk0sd2zRg"></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"dark")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu3eb23de3887ddd6e62d6d97763c9067f_143046_300x0_resize_q75_box.jpeg width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>冷曦的喵喵小屋</a></h1><h2 class=site-description>一个希望世间一切安好的普通人 愿每个人都能够被温柔以待</h2></div></header><ol class=social-menu><li><a href=https://github.com/Hiyase target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com/Hiyase_Nya target=_blank title=Twitter rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li><li><a href=https://t.me/END_Sen target=_blank title=Telegram rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-telegram" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l-4 4 6 6 4-16-18 7 4 2 2 6 3-4"/></svg></a></li><li><a href=mailto:END.Send233@gmail.com target=_blank title=Mail rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path d="M3 7l9 6 9-6"/></svg></a></li><li><a href=index.xml target=_blank title=RSS rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="5" cy="19" r="1"/><path d="M4 4a16 16 0 0116 16"/><path d="M4 11a9 9 0 019 9"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>主页</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>归档</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>搜索</span></a></li><li><a href=/friends/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>友链</span></a></li><div class=menu-bottom-section><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#adb-base-command>ADB Base command</a></li><li><a href=#get-hardware-info>Get Hardware info</a><ol><li><a href=#cpu-info>CPU info</a><ol><li><a href=#more-cpu-info>More CPU info</a></li></ol></li><li><a href=#get-gpu-info>Get GPU info</a><ol><li><a href=#opengl和vulkan的更多信息只能通过代码实现>OpenGL和Vulkan的更多信息只能通过代码实现</a></li></ol></li><li><a href=#get-memory-info>Get Memory info</a></li><li><a href=#get-disk-info>Get Disk info</a></li><li><a href=#get-screen-info>Get Screen info</a><ol><li><a href=#wm-command>wm Command</a></li></ol></li><li><a href=#get-battery-info>Get Battery info</a><ol><li><a href=#设计电池电量需要实用代码实现充电信息可能只能使用root获取>设计电池电量需要实用代码实现，充电信息可能只能使用Root获取</a></li><li><a href=#use-root-get-battery-info>Use root Get Battery info</a></li></ol></li><li><a href=#get-camera-info>Get Camera info</a></li><li><a href=#get-network-info>Get Network info</a><ol><li><a href=#目前无进度使用代码实现使用root可以使用iw命令>目前无进度，使用代码实现，使用root可以使用<code>iw</code>命令()</a></li></ol></li><li><a href=#get-bluetooth-info>Get Bluetooth info</a></li><li><a href=#get-audio-info>Get Audio info</a></li><li><a href=#get-otherdevice-info>Get OtherDevice info</a></li></ol></li><li><a href=#get-system-info>Get System info</a><ol><li><a href=#get-build-info>Get Build info</a></li><li><a href=#get-permission-info>Get permission info</a></li><li><a href=#get-users-info>Get Users info</a></li><li><a href=#get-other-info>Get Other info</a></li><li><a href=#settings>Settings</a><ol><li><a href=#captive-protal>Captive Protal</a></li></ol></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E7%A8%8B%E5%BA%8F%E7%9B%B8%E5%85%B3/>程序相关</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/use-adb-get-info/>使用ADB获取各类信息</a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg><time class=article-time--published>2023/08/19</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 6 分钟</time></div></footer></div></header><section class=article-content><p>以下信息获取方法都是在设备 <a class=link href=https://www.mi.com/redmik30pro/specs target=_blank rel=noopener>Redmi K30 Pro</a> 以及 <a class=link href=https://crdroid.net/lmi/9 target=_blank rel=noopener>Crdroid Rom</a> 上进行<br>如在联发科，华为设备上，可能部分命令无法使用。且不保证所有命令都可以使用</p><h2 id=adb-base-command>ADB Base command</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb -s <span class=o>[</span>serial/IP:Port<span class=o>]</span> <span class=c1>#使用指定的序列号/地址进行连接</span>
+</span></span><span class=line><span class=cl>adb devices -l <span class=c1>#获取已连接的设备， -l 有更细节的参数</span>
+</span></span><span class=line><span class=cl>adb connect <span class=c1>#ip:port 通过无线网络连接</span>
+</span></span></code></pre></td></tr></table></div></div><p>state: authorizing (等待授权) ，device(已连接) no device(无设备) ，offline(未连接/无响应)</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>usb</span><span class=p>:</span><span class=w>                      </span><span class=c>#有此参数表示该设备通过USB连接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>product</span><span class=p>:</span><span class=w> </span><span class=l>lineage_lmi     </span><span class=w> </span><span class=c>#设备的产品名称是lineage_lmi，它似乎运行的是LineageOS自定义ROM。</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>model</span><span class=p>:</span><span class=w> </span><span class=l>Redmi_K30_Pro     </span><span class=w> </span><span class=c>#设备的模型名称是Redmi K30 Pro。</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>device</span><span class=p>:</span><span class=w> </span><span class=l>lmi              </span><span class=w> </span><span class=c>#设备的代号</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>transport_id</span><span class=p>:</span><span class=w> </span><span class=m>11</span><span class=w>          </span><span class=c>#传输ID为11</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c>#由以下三个属性组成：ro.product.name ro.product.model ro.product.device</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><a class=link href=https://www.cnblogs.com/1996swg/p/9810424.html target=_blank rel=noopener>https://www.cnblogs.com/1996swg/p/9810424.html</a> <em><strong>要看一下</strong></em></p><h2 id=get-hardware-info>Get Hardware info</h2><hr><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell getprop ro.product.manufacturer <span class=c1>#获取设备制造商</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.product.model        <span class=c1>#获取设备型号 </span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.product.name         <span class=c1>#获取设备产品名称</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.product.device       <span class=c1>#获取设备代号</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.product.board        <span class=c1>#获取主板型号</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=cpu-info>CPU info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell getprop ro.soc.manufacturer <span class=c1>#获取soc制造商</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.soc.model <span class=c1>#获取soc名称</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>adb shell cat /sys/devices/soc0/vendor <span class=c1>#获取soc0的制造商信息</span>
+</span></span><span class=line><span class=cl>adb shell cat /sys/devices/soc0/family <span class=c1>#获取soc0的家族系列</span>
+</span></span><span class=line><span class=cl>adb shell cat /sys/devices/soc0/chip_name <span class=c1>#获取soc0的芯片名称</span>
+</span></span><span class=line><span class=cl>adb shell cat /sys/devices/system/cpu/possible <span class=c1>#获取 cpu 核心数</span>
+</span></span><span class=line><span class=cl>adb shell cat /proc/stat <span class=c1>#获取 cpu 运行状态</span>
+</span></span><span class=line><span class=cl>adb shell cat /proc/cpuinfo 
+</span></span><span class=line><span class=cl>adb shell su -c cat <span class=s1>&#39;/dev/block/bootdevice/by-name/logfs | grep &#34;Chip&#34;&#39;</span> <span class=c1>#芯片，版本，序列号（疑似联发科不可用）</span>
+</span></span></code></pre></td></tr></table></div></div><p>processor: 0/1 表示第几个核。
+BogoMIPS：伪MIPS，用于测量CPU速度
+Features：表示当前CPU所支持的特性
+CPU architecture：7表示arm-v7，8表示arm-v8</p><h4 id=more-cpu-info>More CPU info</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell cat /sys/devices/system/cpu/cpufreq/policy<span class=o>[</span>id<span class=o>]</span>/
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>affected_cpus</code> — 这一组policy可调度哪个核心</li><li><code>cpuinfo_min_freq</code> — CPU 最小可用频率</li><li><code>cpuinfo_max_freq</code> — CPU 最大可用频率</li><li><code>scaling_driver</code> — CPUfreq 的驱动程序</li><li><code>scaling_available_governors</code> — 列出CPU可用的调度器</li><li><code>scaling_available_frequencies</code> — 列出CPU的可用频率</li><li><code>scaling_governor</code> — 正在使用的CPUfreq调度器 (可更改)</li><li><code>cpuinfo_cur_freq</code> — 显示 CPU 当前的处理频率</li><li><code>scaling_min_freq</code> — 当前最小频率 (可更改)</li><li><code>scaling_max_freq</code> — 当前最大频率 (可更改)</li></ul><p><strong>使用 <code>echo [调度器] > /sys/devices/system/cpu/cpufreq/policy[id]/scaling_governor</code> (root)可以更改调度器</strong>
+<strong>频率同理，但无论更改哪个，必须是可用的</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell <span class=s1>&#39;su -c &#34;echo xxx &gt; file&#34;&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>possible 可能的CPU核心数
+present 展示的CPU核心数
+modalias ：CPU 类型和 feature
+uevent :展示(?)信息 (需要Root) 作用不详
+ofline online 下线/上线的CPU</p><h3 id=get-gpu-info>Get GPU info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys gfxinfo <span class=c1>#信息过多需要精简(无用信息)</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys graphicsstats <span class=c1>#应用显卡占用历史信息(无用信息)</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys SurfaceFlinger <span class=p>|</span>grep GLES <span class=c1>#显卡型号及OpenGL版本</span>
+</span></span><span class=line><span class=cl>adb shell cmd gpu vkjson <span class=c1># vulkan 信息(部分)(未来可能弃用)</span>
+</span></span></code></pre></td></tr></table></div></div><p>在 <code>/sys/kernel/gpu</code> 目录下，可以修改调度器及频率信息(更改和读取均需要Root) <em>华为设备可能不在此目录</em></p><ul><li><code>gpu_available_governor</code> — 可用的调度器列表</li><li><code>gpu_governor</code> — 当前使用的调度器 (可更改)</li><li><code>gpu_freq_table</code> — 支持频率列表</li><li><code>gpu_min_clock</code> — 当前最小频率 (可更改)</li><li><code>gpu_max_clock</code> — 当前最大频率 (可更改)</li><li><code>gpu_busy</code> — 当前占用率</li><li><code>gpu_clock</code> — 当前处理频率，单位<code>Mhz</code></li><li><code>gpu_tmu</code> — <strong>不知道</strong></li></ul><p>上述目录是软链接，真实目录为：
+<code>/sys/devices/platform/soc/3d00000.qcom,kgsl-3d0/devfreq/3d00000.qcom,kgsl-3d0</code>
+但使用真实目录可能会造成不兼容</p><h4 id=opengl和vulkan的更多信息只能通过代码实现>OpenGL和Vulkan的更多信息只能通过代码实现</h4><p><strong>from Google:</strong>
+如果设备包含 Vulkan 驱动程序，则该设备需要声明 <code>FEATURE_VULKAN_HARDWARE_LEVEL</code> 和 <code>FEATURE_VULKAN_HARDWARE_VERSION</code> 系统功能</p><h3 id=get-memory-info>Get Memory info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell cat /proc/meminfo <span class=c1>#参数太多，等待理解</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys procstats <span class=c1>#内存占用情况，等待检查更多参数</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys meminfo -h <span class=c1>#等待检查更多参数</span>
+</span></span><span class=line><span class=cl>adb shell su -c cat <span class=s1>&#39;/dev/block/bootdevice/by-name/logfs | grep &#34;DDR Frequency&#34;&#39;</span> <span class=c1>#疑似获取内存频率 (疑似联发科不可用)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-disk-info>Get Disk info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys diskstats <span class=c1>#磁盘状态</span>
+</span></span><span class=line><span class=cl>adb shell df <span class=c1>#目前信息还少，需要其他方案</span>
+</span></span><span class=line><span class=cl>adb shell dd <span class=s2>&#34;if=/dev/block/bootdevice/by-name/recovery of=/sdcard/recovery.img&#34;</span> <span class=c1>#备份recovery 到 /sdcard</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-screen-info>Get Screen info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys display <span class=c1>#大量显示相关信息 (需筛选)</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys SurfaceFlinger <span class=c1>#图形合成器信息（包含屏幕信息，等筛选</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.sf.lcd_density <span class=c1>#疑似获取默认屏幕密度</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=wm-command>wm Command</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell wm size <span class=c1>#显示或更改尺寸</span>
+</span></span><span class=line><span class=cl>adb shell wm size reset <span class=c1>#重置屏幕尺寸</span>
+</span></span><span class=line><span class=cl>adb shell wm density <span class=c1>#显示或更改密度</span>
+</span></span><span class=line><span class=cl>adb shell wm density reset <span class=c1>#重置屏幕密度</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-battery-info>Get Battery info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys battery -h <span class=c1>#等待检查更多参数</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys batterystats -h <span class=c1>#等待检查更多参数</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=l>From adb shell dumpsys battery</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>AC powered</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>              </span><span class=c>#表示交流电充电 true为正在充电,false为未在充电</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>USB powered</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>            </span><span class=c>#表示USB充电，规则同上，省略</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Wireless powered</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>       </span><span class=c>#表示无线充电</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Max charging current</span><span class=p>:</span><span class=w> </span><span class=m>1742674</span><span class=w> </span><span class=c>#当前充电电流， 这里为 1742674 µA 微安培 换算为 1742.674 mA</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Max charging voltage</span><span class=p>:</span><span class=w> </span><span class=m>4289539</span><span class=w> </span><span class=c>#当前充电电压， 这里为 4289539 nV 纳伏特 换算为 4.289539 mV</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Charge counter</span><span class=p>:</span><span class=w> </span><span class=m>2015801</span><span class=w>       </span><span class=c>#疑似单位为 µAh 微安时 换算为 2015.801mAh 充满电时为 3622.000mAh 可能是损耗</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>status: 2                     #电池状态 1: 未知 2: 正在充电 3: 正在放电 4</span><span class=p>:</span><span class=w> </span><span class=l>(已连接)但未充电 5:已充满 </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>health: 2                     #电池健康 1: 未知 2: 良好 3: 过热 4: 已损坏 5: 电压过高。6: 未知故障。7</span><span class=p>:</span><span class=w> </span><span class=l>温度过低</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>present</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>                 </span><span class=c>#true表示已安装电池</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>level</span><span class=p>:</span><span class=w> </span><span class=m>56</span><span class=w>                     </span><span class=c>##当前电池电量</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>scale</span><span class=p>:</span><span class=w> </span><span class=m>100</span><span class=w>                    </span><span class=c>##最大电池电量</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>voltage</span><span class=p>:</span><span class=w> </span><span class=m>4289</span><span class=w>                 </span><span class=c>#电池电压</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>temperature</span><span class=p>:</span><span class=w> </span><span class=m>307</span><span class=w>              </span><span class=c>#温度，这里是30.7°C</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>technology</span><span class=p>:</span><span class=w> </span><span class=l>Li-poly          </span><span class=w> </span><span class=c>#电池技术，这里是锂电池</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h4 id=设计电池电量需要实用代码实现充电信息可能只能使用root获取>设计电池电量需要实用代码实现，充电信息可能只能使用Root获取</h4><h4 id=use-root-get-battery-info>Use root Get Battery info</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell su -c cat /sys/class/power_supply/bms/uevent
+</span></span><span class=line><span class=cl>adb shell su -c cat /sys/class/power_supply/battery/uevent
+</span></span><span class=line><span class=cl>adb shell su -c cat /sys/class/power_supply/usb/uevent
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-camera-info>Get Camera info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys media.camera <span class=c1>#等待信息筛选</span>
+</span></span></code></pre></td></tr></table></div></div><p>更多信息需要代码实现</p><h3 id=get-network-info>Get Network info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell ifconfig <span class=c1>#可以使用</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys wifi <span class=c1>#大量无用信息，懒得筛选</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys telecom <span class=c1>#可能有相关信息</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys telephony.registry <span class=c1>#可能有相关信息</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=目前无进度使用代码实现使用root可以使用iw命令>目前无进度，使用代码实现，使用root可以使用<code>iw</code>命令()</h4><h3 id=get-bluetooth-info>Get Bluetooth info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys bluetooth_manager <span class=c1>#一条命令基本足以</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-audio-info>Get Audio info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys media.audio_policy
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-otherdevice-info>Get OtherDevice info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys input <span class=c1>#输入设备</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys sensorservice <span class=c1>#传感器</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=get-system-info>Get System info</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell pm list features <span class=c1>#系统所支持的特性</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-build-info>Get Build info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell getprop ro.build.version.release        <span class=c1># Android 版本号</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.version.sdk            <span class=c1># API 版本</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.version.security_patch <span class=c1># 安全更新的日期</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.id                     <span class=c1># 构建的版本号</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.display.id             <span class=c1># 显示的构建版本号</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.fingerprint            <span class=c1># 构建的指纹</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.date                   <span class=c1># 构建时间</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.date.utc               <span class=c1># 以unix时间戳显示的构建时间</span>
+</span></span><span class=line><span class=cl>adb shell getprop ro.build.tags                   <span class=c1># 构建的标签</span>
+</span></span><span class=line><span class=cl>adb shell getprop gsm.version.baseband            <span class=c1># 获取基带信息</span>
+</span></span><span class=line><span class=cl>adb shell uname -a                                <span class=c1># 获取内核版本</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-permission-info>Get permission info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell pm list permission-groups <span class=c1>#列出所有权限组</span>
+</span></span><span class=line><span class=cl>adb shell pm list permissions <span class=c1>#列出所有权限</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-users-info>Get Users info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell pm list users <span class=c1>#列出所有用户</span>
+</span></span><span class=line><span class=cl>adb shell pm create-user <span class=c1>#创建用户</span>
+</span></span><span class=line><span class=cl>adb shell pm remove-user <span class=c1>#删除用户</span>
+</span></span><span class=line><span class=cl>adb shell pm get-max-users <span class=c1>#获取最大用户数</span>
+</span></span><span class=line><span class=cl>adb shell setprop fw.max_users <span class=m>10</span> <span class=c1>#设置最大用户数为10 (需要root)</span>
+</span></span><span class=line><span class=cl>adb shell pm set-user-restriction <span class=c1>#设置用户限制</span>
+</span></span><span class=line><span class=cl>adb shell pm get-max-running-users <span class=c1>#获取系统可以运行的最大用户数</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys activity users <span class=c1>#活动中的用户信息</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=get-other-info>Get Other info</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell dumpsys media.player <span class=c1># 编解码器信息</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys media.extractor <span class=c1># 编解码器信息</span>
+</span></span><span class=line><span class=cl>adb shell dumpsys account <span class=c1># 获取用户下已登陆账户信息 </span>
+</span></span><span class=line><span class=cl>adb shell dumpsys webviewupdate <span class=c1>#WebView信息</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=settings>Settings</h3><p>当命令是setings <code>get</code> 为获取 <code>put</code> 为修改
+使用 <code>setprop</code> 可以更改prop内容</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell getprop persist.sys.locale              <span class=c1># 设置的语言</span>
+</span></span><span class=line><span class=cl>adb shell getprop persist.sys.timezone            <span class=c1># 设置的时区</span>
+</span></span><span class=line><span class=cl>adb shell settings get secure system_locales      <span class=c1># 系统的语言地区信息(?)</span>
+</span></span><span class=line><span class=cl>adb shell settings get global device_name         <span class=c1># 用户定义的设备名称</span>
+</span></span><span class=line><span class=cl>adb shell settings get global zram_enabled        <span class=c1># 是否启用zram</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=captive-protal>Captive Protal</h4><p>网络验证功能 修改后需要重启网络</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>adb shell settings get global captive_portal_detection_enabled  <span class=c1># 1为启用 0为禁用</span>
+</span></span><span class=line><span class=cl>adb shell settings get global captive_portal_use_https          <span class=c1># 是否启用https</span>
+</span></span><span class=line><span class=cl>adb shell settings get global captive_portal_server             <span class=c1># 验证服务地址</span>
+</span></span><span class=line><span class=cl>adb shell settings get global captive_portal_http_url
+</span></span><span class=line><span class=cl>adb shell settings get global captive_portal_https_url
+</span></span></code></pre></td></tr></table></div></div></section><footer class=article-footer><section class=article-tags><a href=/tags/android/>Android</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/computer-startup-process/><div class=article-details><h2 class=article-title>计算机启动过程</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2023 冷曦的喵喵小屋</section><section class=powerby>Hiyase’s Blog<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.20.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script><script type=text/javascript src=/ts/custom.js defer></script>
+<script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

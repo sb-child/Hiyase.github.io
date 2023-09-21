@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>未来畅想 on 冷曦的喵喵小屋</title><link>https://hiyase.github.io/categories/%E6%9C%AA%E6%9D%A5%E7%95%85%E6%83%B3/</link><description>Recent content in 未来畅想 on 冷曦的喵喵小屋</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 07 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://hiyase.github.io/categories/%E6%9C%AA%E6%9D%A5%E7%95%85%E6%83%B3/index.xml" rel="self" type="application/rss+xml"/><item><title>我真的懂程序吗</title><link>https://hiyase.github.io/p/my-programs-question/</link><pubDate>Mon, 07 Aug 2023 00:00:00 +0000</pubDate><guid>https://hiyase.github.io/p/my-programs-question/</guid><description>&lt;h2 id="扪心自问我真的懂程序吗">扪心自问，我真的懂程序吗…&lt;/h2>
+&lt;p>从21年，甚至更早，想着自己写一个项目，但到目前为止，内心的项目到现在仍未实现，本来想着第一篇博客是一个技术向博客，但是还是在这里碎碎念吧…&lt;/p>
+&lt;p>在VSCode面前，放在键盘上，试想着如何写出，试想着搜索什么，左右拼凑成一个我自己写出来的项目程序，可是没学过任何程序的我…不会写&lt;em>&lt;strong>甚至于…内心充满了悲伤，我很痛苦&lt;/strong>&lt;/em>，很想写出来做一个优秀漂亮的好程序，大项目，可是连开头我都做不出来，甚至想用ChatGPT帮我写，有着思路，有着头绪的输入，但是总好像不完美，我不够满意……我……好像不懂程序，但我总是试着理解程序…例如一次点击事件，一次鼠标的拖动事件(其XY坐标的变化…)。&lt;/p>
+&lt;p>让程序只是能跑起来？…嗯…我不满意…是这样，我不想妥协…想让程序更高效，更优质，而不只是，it work。&lt;/p>
+&lt;h2 id="androidmanager程序规划">AndroidManager程序规划&lt;/h2>
+&lt;p>都写到这里了，讲一讲心里那个程序规划吧，有人要是愿意抄出来呢，也好，但是请写思路来源这里，接下来讲大致的程序设计吧&lt;/p>
+&lt;p>一个基于ADB(Android Debug Bridge)的 &lt;strong>桌面端的&lt;/strong> &lt;strong>Android管理器&lt;/strong> 可能也会用到Fastboot之类的Android-Platform-Tools，我想做的功能有很多，也想开源。说实话，我觉得它更像一个手机助手 但我希望它是一个&lt;strong>跨平台的&lt;/strong>，支持多设备的，支持各类语言的&lt;em>&lt;strong>Android管理器&lt;/strong>&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>设备信息获取(主页面)：
+&lt;ul>
+&lt;li>ADB的权限很高，可以拿到很多设备信息，让人知道自己的硬件状况，拿不到的就用Root做&lt;/li>
+&lt;li>获取处理器，内存，硬盘，屏幕，电池，摄像头，甚至是指纹和扬声器的信息，用户有权知道硬件是谁制造的，有着什么参数&lt;/li>
+&lt;li>然后就是获取系统信息，是否Root，SELinux状态，甚至是SafeNet，虽然没什么用，不放会觉得缺点什么(也不着重写)&lt;/li>
+&lt;li>主页面套个 &lt;a class="link" href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener"
+>scrcpy&lt;/a>作为屏幕显示和控制（也作为一个主功能）&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>应用管理器(模块)：
+&lt;ul>
+&lt;li>&lt;strong>可以进行多用户管理的应用管理器,可以进行多用户管理的应用管理器,可以进行多用户管理的应用管理器(对多用户功能的执念)&lt;/strong>&lt;/li>
+&lt;li>嗯&amp;hellip;对应用的安装，卸载，备份，显示应用的各类信息，对活动，服务，权限(AppOps)的管理&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>文件管理器(模块)：
+&lt;ul>
+&lt;li>走MTP服务的文件管理器效率好像很慢，所以基于ADB的来一份效率会不会提高(所以只是普通的文件管理器)&lt;/li>
+&lt;li>如果adb效率不高的话，就在设备上开文件相关的网络服务(如FTP/SMB)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>任务管理器(模块)：
+&lt;ul>
+&lt;li>以Android应用管理视角和Linux进程管理视角做主选项，显示CPU，内存，硬盘读写占用情况，显示哪个用户使用&lt;/li>
+&lt;li>按CPU、内存、硬盘、占用情况及用户排序，显示其应用下的服务/进程，或是进程下的进程，并且给折叠起来&lt;/li>
+&lt;li>CPU(多线程)、内存(硬件保留，系统占用，应用占用，已缓存)、硬盘独立的占用视图及相关详细数据&lt;/li>
+&lt;li>以及进程状态，甚至是给设置状态（如ACTIVE,RARE等（好像应该放在应用管理器）&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>磁盘管理器(模块)：
+&lt;ul>
+&lt;li>对Android所有分区进行备份，还原，格式化，擦除，对分区进行调整(危险性功能警告)&lt;/li>
+&lt;li>挂载内存盘&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>杂项功能(模块)：
+&lt;ul>
+&lt;li>大概就是一些改一些设置页面不存在的隐藏设置，例如改一改网络检测服务器，改一改时间更新服务器&lt;/li>
+&lt;li>还有就是围绕着ADB的各类东西，黑域激活，冰箱激活那种吧&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="既然要画饼那就画大饼哪怕吃不下">既然要画饼，那就画大饼，哪怕吃不下&lt;/h3>
+&lt;p>后续随时可能修改文章，把饼画的更大&lt;/p>
+&lt;p>scrcpy题外话：在&lt;a class="link" href="https://blog.rom1v.com/2018/03/introducing-scrcpy/" target="_blank" rel="noopener"
+>scrpy开发者的博客&lt;/a>里,有把dex文件push进系统里的方法，一些功能无法实现的话，也可以试试&lt;/p></description></item></channel></rss>
